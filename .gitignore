@@ -1,0 +1,10 @@
+# JetBrains IDEs
+.idea/
+
+# VS Code
+.history/
+
+# Node/npm
+/node_modules/
+
+# Custom

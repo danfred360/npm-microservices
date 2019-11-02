@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Holiday Microservice</title>
+    <style>
+        .header {
+            border-bottom: 1px solid rgb(51, 51, 51);
+            width: fit-content;
+        }
+        .result {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="header">Holidays</h1>
+        <div id="holidays" class="result"></div>
+        <br>
+        <h1 class="header">Holidays On Date</h1>
+        <div>
+            <span>Date: </span>
+            <input type="date" id="holidaysOnDateInput">
+            <button type="submit" onclick="holidaysOnDate()">Submit</button>
+        </div>
+        <div id="holidaysOnDate" class="result"></div>
+        <br>
+        <h1 class="header">Offset date in business days</h1>
+        <div>
+            <span>Date: </span>
+            <input type="date" id="holidaysOffsetDateInput">
+            <span>Offset: </span>
+            <input type="number" id="holidaysOffsetInput">
+            <button type="submit" onclick="holidaysOffset()">Submit</button>
+        </div>
+        <div id="holidaysOffset" class="result"></div>
+    </div>
+</body>
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        loadHolidays();
+        document.getElementById('holidaysOnDateInput').value = '2019-12-25';
+        holidaysOnDate();
+
+        document.getElementById('holidaysOffsetDateInput').value = '2019-12-24';
+        document.getElementById('holidaysOffsetInput').value = 1;
+        holidaysOffset();
+    });
+
+    function loadHolidays() {
+        fetch('/api/holidays')
+            .then(res => res.json())
+            .then(holidays => document.getElementById('holidays').innerHTML = holidays.join(', '));
+    }
+
+    function holidaysOnDate() {
+        let date = document.getElementById('holidaysOnDateInput').value;
+        if (!date) return;
+
+        fetch(`/api/holidays/${date}`)
+            .then(res => res.json())
+            .then(holidays => {
+                if (holidays && holidays.length > 0) {
+                    document.getElementById('holidaysOnDate').innerHTML = `Holidays on ${date}: ${holidays.join(', ')}`;
+                } else {
+                    document.getElementById('holidaysOnDate').innerHTML = `No holidays on ${date}`;
+                }
+            })
+    }
+
+    function holidaysOffset() {
+        let date = document.getElementById('holidaysOffsetDateInput').value;
+        let offset = document.getElementById('holidaysOffsetInput').value;
+        if (!date || !offset) return;
+
+        fetch(`/api/holidays/offset?date=${date}&offset=${offset}`)
+            .then(res => res.text())
+            .then(offsetDate => document.getElementById('holidaysOffset').innerHTML = "Offset date: " + offsetDate);
+    }
+</script>
+
+</html>

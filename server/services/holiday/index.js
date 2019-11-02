@@ -36,7 +36,8 @@ const holidays = {
       .month(MONTH.January)
       .date(1);
   }),
-  christmas: new Holiday(function(year) {
+  // prettier-ignore
+  "christmas": new Holiday(function(year) {
     return dayjs()
       .year(year)
       .month(MONTH.December)
